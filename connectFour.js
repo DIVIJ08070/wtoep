@@ -30,7 +30,10 @@ function isEmpty(board){
 }
 
 function isWin(board){
+<<<<<<< HEAD
 
+=======
+>>>>>>> 36efa0e675a1fe7d0e1a623b2265e243fadac7e7
     //row wining
     for(let row=0; row < 6; row ++){
         for(let column = 0; column < 4; column++){
@@ -176,10 +179,16 @@ function min(no1 , no2){
 }
 
 function minMax(board , depth , isCom){
+<<<<<<< HEAD
 
     let score = isWin(board);
 
     if(score === 10 || score === -10 || !(isEmpty(board))){
+=======
+    let score = isWin(board);
+
+    if(score === 10 || score === -10 || !(isEmpty(board)) || depth > 5){
+>>>>>>> 36efa0e675a1fe7d0e1a623b2265e243fadac7e7
         return score;
     }
 
@@ -234,11 +243,18 @@ function findBestMove(board){
 
     for(let row = 0; row < 6; row++ ){
         for(let column = 0; column < 7; column++){
+<<<<<<< HEAD
            
             if(board[row][column] === 0){
 
                 board[row][column] = computer;
                 score = minMax(board , 0 , false);
+=======
+            if(board[row][column] === 0){
+                board[row][column] = computer;
+                score = minMax(board , 0 , false);
+
+>>>>>>> 36efa0e675a1fe7d0e1a623b2265e243fadac7e7
                 board[row][column] = 0;
 
                 if(score > bestScore){
