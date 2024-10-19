@@ -1,0 +1,114 @@
+#gameboard {
+    display: grid;
+    grid-template-columns: repeat(7, 100px); /* 7 columns */
+    grid-template-rows: repeat(6, 100px);    /* 6 rows */
+    gap: 5px; /* Space between tiles */
+}
+@keyframes popUp {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.tile {
+    width: 100px;
+    height: 100px;
+    background-color: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    border-radius: 10px;
+    opacity: 0; 
+    animation: popUp 0.4s ease forwards; 
+}
+
+.tile:hover {
+    transform: scale(1.4); 
+    background-color: rgb(255, 255, 255); 
+}
+
+.tile:nth-child(1) { animation-delay: 0.1s; }
+.tile:nth-child(2) { animation-delay: 0.2s; }
+.tile:nth-child(3) { animation-delay: 0.3s; }
+.tile:nth-child(4) { animation-delay: 0.4s; }
+.tile:nth-child(5) { animation-delay: 0.5s; }
+.tile:nth-child(6) { animation-delay: 0.2s; }
+.tile:nth-child(7) { animation-delay: 0.3s; }
+.tile:nth-child(8) { animation-delay: 0.4s; }
+.tile:nth-child(9) { animation-delay: 0.5s; }
+.tile:nth-child(10) { animation-delay: 0.6s; }
+.tile:nth-child(11) { animation-delay: 0.3s; }
+.tile:nth-child(12) { animation-delay: 0.4s; }
+.tile:nth-child(13) { animation-delay: 0.5s; }
+.tile:nth-child(14) { animation-delay: 0.6s; }
+.tile:nth-child(15) { animation-delay: 0.7s; }
+.tile:nth-child(16) { animation-delay: 0.4s; }
+.tile:nth-child(17) { animation-delay: 0.5s; }
+.tile:nth-child(18) { animation-delay: 0.6s; }
+.tile:nth-child(19) { animation-delay: 0.7s; }
+.tile:nth-child(20) { animation-delay: 0.8s; }
+
+.tile[data-player="1"] {
+    background-color: red; 
+}
+
+.tile[data-player="-1"] {
+    background-color: yellow; 
+}
+
+@keyframes fadeInPop {
+    0% {
+        transform: scale(0.83);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.acode {
+    background-color: aliceblue;
+    height: 700px;
+    width: 600px;
+    border-radius: 25px;
+    padding: 10px;
+    opacity: 0; 
+    animation: fadeInPop 0.5s ease forwards;
+    animation-delay: 0.3s;
+    overflow: scroll;
+}
+
+.connecter
+{
+    display: flex;
+    justify-content:space-around;
+}
+.headingfour
+{
+    justify-content: center;
+    margin-left: 600px;
+}
+
+.rstfour
+{
+    margin: 20px;
+    padding: 10px;
+    border-radius: 10px;
+}
+.rstfour:hover
+{
+    background-color: lightblue;
+    transform: scale(1.1);
+}
+#status
+{
+    font-size: 30px;
+}

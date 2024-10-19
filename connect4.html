@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect 4</title>
+    <link rel="stylesheet" href="connect4.css">
+</head>
+<body background="./Desktop - 4.png">
+    <h1 class="headingfour">Connect-4</h1>
+   
+    <div class="connecter">
+        <div>
+             <div id="gameboard">
+             </div>
+             <button id="restart-btn" class="rstfour">Restart Game</button>
+             <div id="status">Your turn!</div>
+        </div>
+        <div class="acode">
+            <button onclick="showCode('py')">Python</button>
+            <button onclick="showCode('js')">JavaScript</button>
+            <div id="coding"></div> 
+        </div>
+    </div>
+ 
+    <script src="./connect4.js">
+    </script>
+     <script>
+        const pyCode = `# Constants
+PLAYER = 'x'
+COMPUTER = 'o'
+ROWS = 4
+COLS = 5
+MAX_DEPTH = 4  
+
+# Initialize the board
+board = [[None for _ in range(COLS)] for _ in range(ROWS)]
+
+def display_board():
+    """Prints the current board state."""
+    for row in board:
+        print(' '.join([cell if cell else '.' for cell in row]))
+    print("\n")
+
+def evaluate(board):
+    """Evaluates the board to check if there's a winner."""
+    # Horizontal check
+    for row in range(ROWS):
+        for col in range(COLS - 3):
+            if board[row][col] == board[row][col + 1] == board[row][col + 2] == board[row][col + 3]:
+                return 10 if board[row][col] == COMPUTER else -10
+    
+    # Vertical check
+    for col in range(COLS):
+        for row in range(ROWS - 3):
+            if board[row][col] == board[row + 1][col] == board[row + 2][col] == board[row + 3][col]:
+                return 10 if board[row][col] == COMPUTER else -10
+    
+    # Diagonal checks
+    for row in range(ROWS - 3):
+        for col in range(COLS - 3):
+            if board[row][col] == board[row + 1][col + 1] == board[row + 2][col + 2] == board[row + 3][col + 3]:
+                return 10 if board[row][col] == COMPUTER else -10
+    
+    for row in range(3, ROWS):
+        for col in range(COLS - 3):
+            if board[row][col] == board[row - 1][col + 1] == board[row - 2][col + 2] == board[row - 3][col + 3]:
+                return 10 if board[row][col] == COMPUTER else -10
+
+    return 0
+
+def ismoveleft(board):
+    """Checks if there are empty cells left."""
+    for row in board:
+        if None in row:
+            return True
+    return False
+
+def minimax(board, depth, is_maximizing):
+    """Minimax algorithm with depth to find the best move."""
+    score = evaluate(board)
+    
+    if score == 10 or score == -10:  # If AI or player wins
+        return score
+    
+    if not ismoveleft(board) or depth == 0:  # If no moves left or reached max depth
+        return 0
+    
+    if is_maximizing:
+        best = -1000
+        for col in range(COLS):
+            for row in range(ROWS - 1, -1, -1):
+                if board[row][col] is None:
+                    board[row][col] = COMPUTER
+                    best = max(best, minimax(board, depth - 1, False)-1)
+                    board[row][col] = None
+                    break
+        return best
+    else:
+        best = 1000
+        for col in range(COLS):
+            for row in range(ROWS - 1, -1, -1):
+                if board[row][col] is None:
+                    board[row][col] = PLAYER
+                    best = min(best, minimax(board, depth - 1, True)-1)
+                    board[row][col] = None
+                    break
+        return best
+
+def find_best_move(board):
+    """Finds the best move for the computer using minimax."""
+    best_score = -1000
+    best_move = None
+    for col in range(COLS):
+        for row in range(ROWS - 1, -1, -1):
+            if board[row][col] is None:
+                board[row][col] = COMPUTER
+                move_score = minimax(board, MAX_DEPTH, False)
+                board[row][col] = None
+                if move_score > best_score:
+                    best_score = move_score
+                    best_move = (row, col)
+                break
+    return best_move
+
+# Main game loop
+print("Connect4 Game: Player is 'x' and Computer is 'o'\n")
+while evaluate(board) == 0 and ismoveleft(board):
+    display_board()
+    
+    # Player's move
+    play_col = int(input(f"Enter column (0-{COLS - 1}): "))
+    for row in range(ROWS - 1, -1, -1):
+        if board[row][play_col] is None:
+            board[row][play_col] = PLAYER
+            break
+
+    if evaluate(board) != 0 or not ismoveleft(board):
+        break
+
+    # Computer's move
+    row, col = find_best_move(board)
+    if row is not None and col is not None:
+        board[row][col] = COMPUTER
+        print(f"Computer plays at column: {col}")
+
+# Display final result
+display_board()
+result = evaluate(board)
+if result == 10:
+    print("Computer wins!")
+elif result == -10:
+    print("Player wins!")
+else:
+    print("It's a draw!")`;
+
+        const jsCode = `document.addEventListener('DOMContentLoaded', function () {
+    const AI_PLAYER = 1;
+    const HUMAN_PLAYER = -1;
+    const EMPTY = 0;
+    const ROWS = 4;
+    const COLS = 5;
+    let board;
+    let currentPlayer;
+    let gameOver = false;
+    const MAX_DEPTH = 5;
+
+    function createBoard() {
+        board = [];
+        const gameBoard = document.getElementById('gameboard');
+        gameBoard.innerHTML = '';
+
+        for (let row = 0; row < ROWS; row++) {
+            const newRow = [];
+            for (let col = 0; col < COLS; col++) {
+                newRow.push(EMPTY);
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                tile.dataset.row = row;
+                tile.dataset.col = col;
+                tile.addEventListener('click', handleTileClick);
+                gameBoard.appendChild(tile);
+            }
+            board.push(newRow);
+        }
+
+        currentPlayer = HUMAN_PLAYER;
+        gameOver = false;
+        document.getElementById('status').textContent = 'Your turn!';
+    }
+
+    function handleTileClick(event) {
+        if (gameOver || currentPlayer !== HUMAN_PLAYER) return;
+
+        const col = event.target.dataset.col;
+        if (makeMove(board, col, HUMAN_PLAYER)) {
+            updateBoard();
+            if (checkWin(board, HUMAN_PLAYER)) {
+                gameOver = true;
+                document.getElementById('status').textContent = 'You win!';
+            } else {
+                currentPlayer = AI_PLAYER;
+                document.getElementById('status').textContent = 'AI thinking...';
+                setTimeout(() => {
+                    aiMove();
+                }, 500);
+            }
+        }
+    }
+
+    function aiMove() {
+        const bestMove = getBestMove(board);
+        makeMove(board, bestMove, AI_PLAYER);
+        updateBoard();
+
+        if (checkWin(board, AI_PLAYER)) {
+            gameOver = true;
+            document.getElementById('status').textContent = 'AI wins!';
+        } else {
+            currentPlayer = HUMAN_PLAYER;
+            document.getElementById('status').textContent = 'Your turn!';
+        }
+    }
+
+    function updateBoard() {
+        const tiles = document.querySelectorAll('.tile');
+        tiles.forEach(tile => {
+            const row = tile.dataset.row;
+            const col = tile.dataset.col;
+            const player = board[row][col];
+            if (player === AI_PLAYER) {
+                tile.dataset.player = AI_PLAYER;
+            } else if (player === HUMAN_PLAYER) {
+                tile.dataset.player = HUMAN_PLAYER;
+            } else {
+                tile.removeAttribute('data-player');
+            }
+        });
+    }
+
+    function makeMove(board, col, player) {
+        for (let row = ROWS - 1; row >= 0; row--) {
+            if (board[row][col] === EMPTY) {
+                board[row][col] = player;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function undoMove(board, col) {
+        for (let row = 0; row < ROWS; row++) {
+            if (board[row][col] !== EMPTY) {
+                board[row][col] = EMPTY;
+                break;
+            }
+        }
+    }
+
+    function getAvailableMoves(board) {
+        const moves = [];
+        for (let col = 0; col < COLS; col++) {
+            if (board[0][col] === EMPTY) {
+                moves.push(col);
+            }
+        }
+        return moves;
+    }
+
+    function checkWin(board, player) {
+        for (let row = 0; row < ROWS; row++) {
+            for (let col = 0; col < COLS - 3; col++) {
+                if (board[row][col] === player &&
+                    board[row][col + 1] === player &&
+                    board[row][col + 2] === player &&
+                    board[row][col + 3] === player) {
+                    return true;
+                }
+            }
+        }
+
+        for (let col = 0; col < COLS; col++) {
+            for (let row = 0; row < ROWS - 3; row++) {
+                if (board[row][col] === player &&
+                    board[row + 1][col] === player &&
+                    board[row + 2][col] === player &&
+                    board[row + 3][col] === player) {
+                    return true;
+                }
+            }
+        }
+
+        for (let row = 3; row < ROWS; row++) {
+            for (let col = 0; col < COLS - 3; col++) {
+                if (board[row][col] === player &&
+                    board[row - 1][col + 1] === player &&
+                    board[row - 2][col + 2] === player &&
+                    board[row - 3][col + 3] === player) {
+                    return true;
+                }
+            }
+        }
+
+        for (let row = 0; row < ROWS - 3; row++) {
+            for (let col = 0; col < COLS - 3; col++) {
+                if (board[row][col] === player &&
+                    board[row + 1][col + 1] === player &&
+                    board[row + 2][col + 2] === player &&
+                    board[row + 3][col + 3] === player) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    function getBestMove(board) {
+        let bestValue = -Infinity;
+        let bestMove = -1;
+
+        for (let col of getAvailableMoves(board)) {
+            makeMove(board, col, AI_PLAYER);
+            let moveValue = minimax(board, MAX_DEPTH, false);
+            undoMove(board, col);
+
+            if (moveValue > bestValue) {
+                bestValue = moveValue;
+                bestMove = col;
+            }
+        }
+
+        return bestMove;
+    }
+
+    function minimax(board, depth, isMaximizing) {
+        if (checkWin(board, AI_PLAYER)) {
+            return 10;
+        }
+        if (checkWin(board, HUMAN_PLAYER)) {
+            return -10;
+        }
+        if (getAvailableMoves(board).length === 0) {
+            return 0;
+        }
+        if (depth === 0) {
+            return 0;
+        }
+
+        if (isMaximizing) {
+            let bestValue = -Infinity;
+            for (let col of getAvailableMoves(board)) {
+                makeMove(board, col, AI_PLAYER);
+                bestValue = Math.max(bestValue, minimax(board, depth - 1, false)-1);
+                undoMove(board, col);
+            }
+            return bestValue;
+        } else {
+            let bestValue = Infinity;
+            for (let col of getAvailableMoves(board)) {
+                makeMove(board, col, HUMAN_PLAYER);
+                bestValue = Math.min(bestValue, minimax(board, depth - 1, true)-1);
+                undoMove(board, col);
+            }
+            return bestValue;
+        }
+    }
+
+    document.getElementById('restart-btn').addEventListener('click', createBoard);
+
+    createBoard();
+});
+`;
+
+        function showCode(language) {
+            const codeDisplay = document.getElementById('coding');
+            codeDisplay.innerHTML = language === 'js'
+                ? `<pre><code>${jsCode}</code></pre>`
+                : `<pre><code>${pyCode}</code></pre>`;
+        }
+    </script>
+    
+</body>
+</html>
